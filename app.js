@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const logger = require("morgan");
 
-const userRouter = require("./routes/userrouter");
+const userrouter = require("./routes/userrouter");
 
 const app = express();
 
@@ -19,6 +19,6 @@ app.use(express.json({ limit: "2MB" }));
 app.use(logger("dev"));
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/", userRouter);
+app.use("/", userrouter);
 
 module.exports = app;
