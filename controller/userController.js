@@ -2,6 +2,7 @@ const userSchema = require("../model/user");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const courseSchema = require("../model/course");
 
 require("dotenv").config();
 
@@ -11,16 +12,20 @@ const signin = async (req, res) => {
     console.log(req.body);
 
     const user = await userSchema.findOne({ email });
-    if(!user){
-        return res.json({ message: "User not found", status: 400});
-    }else{
-        const passwordMatcher = await bcrypt.compare(password, user.password);
-        if(passwordMatcher){
-            const token = jwt.sign({email: user.email ,userId : user.id ,},process.env.JWT_SECRET,{expiresIn:'1h'});
-            return res.json({ token : token ,status : 200 })
-        }else{
-            return res.json({ status : 400 , message : "Password is incorrect"})
-        }
+    if (!user) {
+      return res.json({ message: "User not found", status: 400 });
+    } else {
+      const passwordMatcher = await bcrypt.compare(password, user.password);
+      if (passwordMatcher) {
+        const token = jwt.sign(
+          { email: user.email, userId: user.id },
+          process.env.JWT_SECRET,
+          { expiresIn: "1h" }
+        );
+        return res.json({ token: token, status: 200 });
+      } else {
+        return res.json({ status: 400, message: "Password is incorrect" });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -46,11 +51,42 @@ const signup = async (req, res) => {
       password: hashedPassword,
     });
     console.log("new user created: ", newUser);
-    const token = jwt.sign({email: user.email ,userId : user.id ,},process.env.JWT_SECRET,{expiresIn:'1h'});
+    const token = jwt.sign(
+      { email: user.email, userId: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-    res.json({ message: "User created successfully", status: 201 , token : token});
+    res.json({
+      message: "User created successfully",
+      status: 201,
+      token: token,
+    });
   } catch (error) {
     console.error("Error during signup:", error);
+    res.json({ error: "Internal server error", status: 500 });
+  }
+};
+
+const createCourse = async (req, res) => {
+  try {
+    let { title, category, duration, description } = req.body;
+    console.log(req.body);
+
+    let existingCourse = await courseSchema.findOne({ title });
+
+    if (existingCourse) {
+      return res.json({ message: "Course already exists", status: 400 });
+    }
+    const newCourse = await courseSchema.create({
+      title,
+      category,
+      duration,
+      description,
+    });
+    res.json({ message: "Course created successfully", status: 201 });
+  } catch (error) {
+    console.log(error);
     res.json({ error: "Internal server error", status: 500 });
   }
 };
@@ -58,4 +94,5 @@ const signup = async (req, res) => {
 module.exports = {
   signin,
   signup,
+  createCourse,
 };
