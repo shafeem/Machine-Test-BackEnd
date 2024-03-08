@@ -21,6 +21,10 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    chapter: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Chapter'
+    }]
 });
 
 const Course = mongoose.model('Course', courseSchema);
