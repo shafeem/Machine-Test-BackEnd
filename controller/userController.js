@@ -94,7 +94,6 @@ const createCourse = async (req, res) => {
 
 const getCourses = async (req, res) => {
   try {
-
     const courses = await courseSchema.find().populate("chapter");
     console.log(courses, ";;;;;");
     res.json({ courses, status: 200 });
@@ -130,19 +129,22 @@ const createChapter = async (req, res) => {
       return res.json({ message: "Course not found", status: 404 });
     }
 
-    const existingChapter = await chapterSchema.findOne({title, course: id});
-    if(existingChapter){
-      return res.json({message: "Chapter already exists", status: 400});
+    const existingChapter = await chapterSchema.findOne({ title, course: id });
+    if (existingChapter) {
+      return res.json({ message: "Chapter already exists", status: 400 });
     }
     const newChapter = await chapterSchema.create({
       title,
       description,
-      course: id
+      course: id,
     });
     console.log(newChapter);
     const updatedCourse = await courseSchema.findByIdAndUpdate(
-      id, { $push: { chapter: newChapter._id } }, {
-        new: true }
+      id,
+      { $push: { chapter: newChapter._id } },
+      {
+        new: true,
+      }
     );
 
     console.log("Chapter created");
@@ -153,6 +155,21 @@ const createChapter = async (req, res) => {
   }
 };
 
+const chapterDetails = async (req, res) => {
+  try {
+    const { id } = req.body;
+    let chapterDetail = await chapterSchema.findById(id)
+    console.log(chapterDetail);
+    if(!chapterDetail){
+      return res.json({message: "Chapter not found", status: 404})
+    }
+    res.json({chapter: chapterDetail, status: 200})
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   signin,
   signup,
@@ -160,4 +177,5 @@ module.exports = {
   getCourses,
   courseDetails,
   createChapter,
+  chapterDetails,
 };

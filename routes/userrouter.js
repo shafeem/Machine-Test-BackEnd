@@ -7,6 +7,7 @@ const {
   getCourses,
   courseDetails,
   createChapter,
+  chapterDetails,
 } = require("../controller/userController");
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.post("/create-course", createCourse);
 router.get("/get-courses", getCourses);
 router.post("/course-details", courseDetails);
 router.post("/create-chapter",createChapter)
+router.post("/chapter-details",chapterDetails)
 
 module.exports = router;

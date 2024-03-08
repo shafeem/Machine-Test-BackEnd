@@ -6,7 +6,6 @@ const courseSchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true,
-        lowercase: true
 
     },
     category: {
@@ -29,3 +28,13 @@ const courseSchema = new mongoose.Schema({
 
 const Course = mongoose.model('Course', courseSchema);
 module.exports = Course;
+
+
+
+
+
+
+
+
+
+
